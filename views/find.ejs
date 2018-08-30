@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        li {
+            list-style: none;
+
+        }
+
+        form {
+            text-align: left;
+            margin-left: 50px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">汽车租赁管理系统</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/find"><span>客人查询</span></a></li>
+                <li><a href="/zu">租赁登记</a></li>
+                <li><a href="/huan">归还登记</a></li>
+                <li><a href="/tong">统计分析</a></li>
+                <li><a href="/lei">类别档案</a></li>
+                <li><a href="/car">汽车档案</a></li>
+                <li><a href="/tuichu" id="tuichu">退出系统</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <%
+                if(!login){
+                %>
+                <li><a href="/reg">注册</a></li>
+                <li><a href="/">登陆</a></li>
+                <%
+                }else{
+                %>
+                <li><a href="#"><%=yonghuming%></a></li>
+                <%
+                }
+                %>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container" style="margin-top: 10px">
+    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">
+        增加
+    </button>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">创建员工</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="biaodan" action="/doadd" method="post">
+                        <p>id：<input type="text" name="sid" /></p>
+                        <p>客户名称：<input type="text" name="name" /></p>
+                        <p>电话：
+                            <input type="text" name="phone" />
+                        </p>
+                        <p>
+                            住址：
+                            <input type="text" name="dizhi" />
+                        </p>
+                        <p>
+                            身份证号：
+                            <input type="text" name="shenfen" />
+                        </p>
+                        <p>
+                            驾照号码：
+                            <input type="text" name="jiazhao" />
+                        </p>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn">ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal1" id="update">
+        修改
+    </button>
+
+    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">编辑员工</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="biaodan2" action="/doadd" method="post">
+                        <p>id：<input type="text" name="sid" id="sid" disabled /></p>
+                        <p>用户名：<input type="text" name="names" id="name" /></p>
+                        <p>电话：
+                            <input type="text" name="phones" id="name" />
+                        </p>
+                        <p>
+                            住址：
+                            <input type="text" name="dizhis" />
+                        </p>
+                        <p>
+                            身份证：
+                            <input type="text" name="shenfens" />
+                        </p>
+                        <p>
+                            驾驶号码：
+                            <input type="text" name="jiazhaos" />
+                        </p>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="ok">ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title show" id="myModalLabel">查看详情</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        姓名:
+                        <span id="namew"></span>
+                    </p>
+                    <p>
+                        性别:
+                        <span id="sex"></span>
+                    </p>
+                    <p>
+                        状态:
+                        <span id="zhuangtai"></span>
+                    </p>
+                    <p>
+                        生日:
+                        <span id="birthday"></span>
+                    </p>
+                    <p>
+                        联系地址:
+                        <span id="address"></span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-danger btn-md" data-toggle="modal" data-target="#myModal4">
+        删除
+    </button>
+
+    <div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">删除员工</h4>
+                </div>
+                <div class="modal-body">
+                    <p>真的要删除?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary shan  ">ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table  table-striped navbar-default" style="margin-top: 50px">
+        <tr>
+            <th></th>
+            <th>机号</th>
+            <th>客户名称</th>
+            <th>电话</th>
+            <th>住址</th>
+            <th>身份证</th>
+            <th>驾照号码</th>
+        </tr>
+
+        <tbody id="tbody"></tbody>
+
+    </table>
+    <div id="pagenavbox"></div>
+</div>
+<script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/PageNav.js"></script>
+<script>
+    //点击添加客户
+    $("#btn").click(function () {
+        $.post("/findadd", {
+            sid: parseInt($("input[name=sid]").val()),
+            name: $("input[name=name]").val(),
+            phone: $("input[name=phone]").val(),
+            dizhi: $("input[name=dizhi]").val(),
+            shenfen: $("input[name=shenfen]").val(),
+            jiazhao: $("input[name=jiazhao]").val()
+        }, function (data) {
+            if (data.result == 1) {
+                alert("提交成功！");
+                window.location.href = '/find';
+                $("input[type=text]").val("");
+            } else if (data.result == -1) {
+                alert("提交失败，学号被占用！");
+            } else if (data.result == -2) {
+                alert("服务器错误！请联系管理员，怎么联系我也不知道！");
+            }
+        })
+    });
+    //更改
+    $("#update").click(function () {
+        if ($("input[name=sid]:checked").length==0){
+            var This = $("input[name=timu]:checked").parents().children();
+            console.log($(This).eq(2).html());
+            var sid = $(This).eq(2).html();
+            $.get("/find/"+sid,function (data) {
+                if (data.result==-1){
+                    alert("查无此人")
+                }else{
+                    $("input[name=sid]").val(data.result.sid);
+                    $("input[name=names]").val(data.result.name);
+                    $("input[name=phones]").val(data.result.phone);
+                    $("input[name=dizhis]").val(data.result.dizhi);
+                    $("input[name=shenfens]").val(data.result.shenfen);
+                    $("input[name=jiazhaos]").val(data.result.jiazhao);
+                }
+            })
+        }
+    })
+    //修改完毕
+    $("#ok").click(function () {
+        var  sid = parseInt($("input[name=sid]").val());
+        $.post("/find/" + sid,{
+            names: $("input[name=names]").val(),
+            phones: $("input[name=phones]").val(),
+            dizhis: $("input[name=dizhis]").val(),
+            shenfens: $("input[name=shenfens]").val(),
+            jiazhaos: $("input[name=jiazhaos]").val()
+        },function(data){
+            if(data.result == 1){
+                alert("修改成功！");
+                window.location = "/find";
+            }else{
+                alert("服务器错误！请联系管理员，怎么联系我也不知道！");
+            }
+        })
+    })
+    //删除
+    $("#tbody").delegate(".delbtn", "click", function () {
+        $(".shan").click(function () {
+            $(this).modal('hide');
+            var sid = $("input[name=timu]:checked").attr("data-sid");
+            var $this = $(this);
+            $.ajax({
+                url: "/delete/" + sid,
+                type: "delete",
+                success: function (data) {
+                    if (data.result == 1) {
+                        alert("删除成功");
+                        $this.parents("tr").remove();
+                        window.location.href = '/find'
+                    } else {
+                        alert("服务器错误！");
+                    }
+                }
+            });
+        })
+    })
+
+    $.get("/findall?page=1", function (data) {
+        new PageNav({
+            boxid: "pagenavbox",
+            page: 1,
+            pageAmount: data.pageAmount,
+            change: function (pagenumber) {
+                gotopage(pagenumber);
+            }
+        });
+        gotopage(1);
+    });
+    function gotopage(pagenumber) {
+        $("#tbody").empty();
+        $.get("/findall?page=" + pagenumber, function (data) {
+            console.log(data.results);
+            $.each(data.results, function (i, n) {
+                $tr = $("<tr class='shows'></tr>");
+                $("<td><input type='radio' class='delbtn' name='timu' data-sid='" + n.sid + "'/></td>").appendTo($tr);
+                $("<td></td>").html(n.sid).appendTo($tr);
+                $("<td></td>").html(n.name).appendTo($tr);
+                $("<td></td>").html(n.phone).appendTo($tr);
+                $("<td></td>").html(n.dizhi).appendTo($tr);
+                $("<td></td>").html(n.shenfen).appendTo($tr);
+                $("<td></td>").html(n.jiazhao).appendTo($tr);
+                //上树
+                $tr.appendTo($("#tbody"));
+            });
+        });
+    }
+
+    $("#tuichu").click(function () {
+        $.get("/tuichu",function (data) {
+            alert("退出成功");
+            window.location="/"
+        })
+    })
+
+</script>
+</body>
+</html>

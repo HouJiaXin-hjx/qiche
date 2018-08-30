@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+<nav class="navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">汽车租赁管理系统</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/find"><span>客人查询</span></a></li>
+                <li><a href="/zu">租赁登记</a></li>
+                <li class="active"><a href="/huan">归还登记</a></li>
+                <li><a href="/tong">统计分析</a></li>
+                <li><a href="/lei">类别档案</a></li>
+                <li><a href="/car">汽车档案</a></li>
+                <li><a href="/tuichu" id="tuichu">退出系统</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <%
+                if(!login){
+                %>
+                <li><a href="/reg">注册</a></li>
+                <li><a href="/">登陆</a></li>
+                <%
+                }else{
+                %>
+                <li><a href="#"><%=yonghuming%></a></li>
+                <%
+                }
+                %>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container" style="margin-top: 10px">
+    <p style="color: red;">已经租出但是还没有归还的车辆 ↓ </p>
+<table class="table  table-striped navbar-default">
+    <tr>
+        <th>行号</th>
+        <th>租赁人</th>
+        <th>租赁名称</th>
+        <th>租赁时长</th>
+        <th>每天价格</th>
+        <th>已付押金</th>
+    </tr>
+    <tbody id="tbody"></tbody>
+
+</table>
+    <p>
+        已付押金:
+        <input type="number" class="form-control" name="yi" id="yi">
+    </p>
+    <p>
+        应付押金:
+        <input type="number" min="1" class="form-control" name="ying">
+    </p>
+    <p>
+        找零金额:
+        <input type="number" class="form-control" name="zhao">
+    </p>
+    <p class="navbar-right">
+        <button id="que" class="btn btn-success">确认</button>
+        <button id="guan" class="btn btn-default">关闭</button>
+    </p>
+</div>
+<script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script>
+    $.get("/ha",function (data) {
+            $.each(data.result,function (i,n) {
+                if(n.zu=="已租出") {
+                    $tr = $("<tr class='shows'></tr>");
+                    $("<td id='sid'></td>").html(n.sid).appendTo($tr);
+                    $("<td></td>").html(n.name).appendTo($tr);
+                    $("<td></td>").html(n.ren).appendTo($tr);
+                    $("<td></td>").html(n.shi+'天').appendTo($tr);
+                    $("<td></td>").html(n.mei).appendTo($tr);
+                    $("<td></td>").html(n.price).appendTo($tr);
+                    $tr.appendTo($("#tbody"));
+                }
+                $(".shows").click(function () {
+                    var This = $(this);
+                    $("input[name=yi]").val(This.children().eq(5).html());
+                    $("input[name=ying]").blur(function () {
+                        $("input[name=zhao]").val($("input[name=yi]").val()-$("input[name=ying]").val());
+                    })
+                    $("#que").click(function () {
+                        var sid = This.children().eq(0).html();
+                        var a = "未租出"
+                        $.post("/gai/" + sid,{
+                            tais:a
+                        },function (data) {
+                            if(data.result == 1){
+                                window.location = "/zu";
+                            }else {
+                                alert("服务器错误！请联系管理员，怎么联系我也不知道！");
+                            }
+                        })
+
+                        $.ajax({
+                            url: "/delet/" + sid,
+                            type: "delete",
+                            success: function (data) {
+                                if (data.result == 1) {
+
+                                } else {
+                                    alert("服务器错误！");
+                                }
+                            }
+                        });
+
+                            $.post("/que",{
+                                sid:This.children().eq(0).html(),
+                                name:This.children().eq(1).html(),
+                                ren:This.children().eq(2).html(),
+                                time:This.children().eq(3).html(),
+                                mei:This.children().eq(4).html(),
+                                he:$("input[name=zhao]").val(),
+                            }, function (data) {
+                                if (data.result == 1) {
+                                    alert("归还成功");
+                                    $("input[type=number]").val("");
+                                    window.location="/tong"
+                                } else if (data.result == -1) {
+                                    alert("归还失败");
+                                } else if (data.result == -2) {
+                                    alert("服务器错误！请联系管理员，怎么联系我也不知道！");
+                                }
+                            })
+
+                    })
+                })
+            })
+        })
+    $("#tuichu").click(function () {
+        $.get("/tuichu",function (data) {
+            alert("退出成功");
+            window.location="/"
+        })
+    })
+</script>
+</body>
+</html>

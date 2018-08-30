@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .border{
+            border: 1px solid #ccc;
+            margin-top: 75px;
+        }
+        .left{
+            width: 10%;
+            height: 100%;
+            float: left;
+            border-right: 1px solid #ccc;
+        }
+        .left li{
+            width: 100%;
+            height: 50px;
+            display: block;
+            float: left;
+            list-style:none;
+            text-align: center;
+            line-height: 50px;
+            cursor: pointer;
+        }
+        .container {
+            padding-right: 0px;
+            padding-left: 0px;
+        }
+        .right{
+            width: 100%;
+            float: right;
+
+        }
+        .red{
+            text-decoration: solid;
+            color: red;
+        }
+        .table{
+             margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">汽车租赁管理系统</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/find"><span>客人查询</span></a></li>
+                <li><a href="/zu">租赁登记</a></li>
+                <li><a href="/huan">归还登记</a></li>
+                <li class="active"><a href="/tong">统计分析</a></li>
+                <li><a href="/lei">类别档案</a></li>
+                <li><a href="/car">汽车档案</a></li>
+                <li><a href="/tuichu" id="tuichu">退出系统</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <%
+                if(!login){
+                %>
+                <li><a href="/reg">注册</a></li>
+                <li><a href="/">登陆</a></li>
+                <%
+                }else{
+                %>
+                <li><a href="#"><%=yonghuming%></a></li>
+                <%
+                }
+                %>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container border">
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#" aria-controls="home" role="tab" data-toggle="tab" id="chu">租出统计</a></li>
+        <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" id="huan">归还统计</a></li>
+    </ul>
+    <div class="right">
+        <table class="table  table-striped navbar-default">
+            <thead>
+            <tr>
+                <td>行号</td>
+                <td>租赁名称</td>
+                <td>租赁人</td>
+                <td>租赁时长</td>
+                <td>每天租金</td>
+                <td>合计金额</td>
+                <td>操作员</td>
+            </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script>
+    $("#chu").click(function () {
+        $("#huan").removeClass("red");
+        $(this).attr("class","red");
+        $.get("/tongall",function (data) {
+            console.log(data);
+            $("#tbody").empty();
+            $.each(data.result,function (i,n) {
+                $tr = $("<tr class='shows'></tr>");
+                $("<td></td>").html(n.sid).appendTo($tr);
+                $("<td></td>").html(n.name).appendTo($tr);
+                $("<td></td>").html(n.ren).appendTo($tr);
+                $("<td></td>").html(n.shi).appendTo($tr);
+                $("<td></td>").html(n.mei).appendTo($tr);
+                $("<td></td>").html(n.price).appendTo($tr);
+                $("<td></td>").html('<%=yonghuming%>').appendTo($tr);
+                $tr.appendTo($("#tbody"));
+            })
+        })
+    })
+    $("#huan").click(function () {
+        $("#chu").removeClass("red");
+        $(this).attr("class","red");
+        $.get("/que",function (data) {
+            console.log(data);
+            $("#tbody").empty();
+            $.each(data.result,function (i,n) {
+                $tr = $("<tr class='shows'></tr>");
+                $("<td></td>").html(n.sid).appendTo($tr);
+                $("<td></td>").html(n.name).appendTo($tr);
+                $("<td></td>").html(n.ren).appendTo($tr);
+                $("<td></td>").html(n.time).appendTo($tr);
+                $("<td></td>").html(n.mei).appendTo($tr);
+                $("<td></td>").html(n.he).appendTo($tr);
+                $("<td></td>").html('<%=yonghuming%>').appendTo($tr);
+                $tr.appendTo($("#tbody"));
+            })
+        })
+    })
+    $("#tuichu").click(function () {
+        $.get("/tuichu",function (data) {
+            alert("退出成功");
+            window.location="/"
+        })
+    })
+</script>
+</body>
+</html>
